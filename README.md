@@ -1,5 +1,3 @@
-# 🚀 Project: **SpringForge** (Repo Name)
-
 > ⚡ *SpringForge — Forge full-stack microservices (Spring Boot + Next.js) in minutes.*
 
 ---
