@@ -120,7 +120,7 @@ public class AddEntityCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add entity: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

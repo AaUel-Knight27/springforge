@@ -1,14 +1,7 @@
 package dev.springforge.util;
 
-/**
- * Naming convention utilities for converting between formats:
- * camelCase, PascalCase, snake_case, kebab-case, etc.
- */
 public class NameUtils {
 
-    /**
-     * Convert to PascalCase: "blog_post" -> "BlogPost", "blog" -> "Blog"
-     */
     public static String toPascalCase(String input) {
         if (input == null || input.isEmpty()) return input;
         StringBuilder sb = new StringBuilder();
@@ -30,18 +23,12 @@ public class NameUtils {
         return sb.toString();
     }
 
-    /**
-     * Convert to camelCase: "BlogPost" -> "blogPost", "blog" -> "blog"
-     */
     public static String toCamelCase(String input) {
         String pascal = toPascalCase(input);
         if (pascal == null || pascal.isEmpty()) return pascal;
         return Character.toLowerCase(pascal.charAt(0)) + pascal.substring(1);
     }
 
-    /**
-     * Convert to snake_case: "BlogPost" -> "blog_post", "blog" -> "blog"
-     */
     public static String toSnakeCase(String input) {
         if (input == null || input.isEmpty()) return input;
         StringBuilder sb = new StringBuilder();
@@ -59,23 +46,14 @@ public class NameUtils {
         return sb.toString();
     }
 
-    /**
-     * Convert to kebab-case: "BlogPost" -> "blog-post", "blog" -> "blog"
-     */
     public static String toKebabCase(String input) {
         return toSnakeCase(input).replace('_', '-');
     }
 
-    /**
-     * Convert to URL path segment: "BlogPost" -> "blog-post"
-     */
     public static String toUrlPath(String input) {
         return toKebabCase(input);
     }
 
-    /**
-     * Convert to plural form (simple English rules).
-     */
     public static String toPlural(String input) {
         if (input == null || input.isEmpty()) return input;
         String lower = input.toLowerCase();
@@ -89,16 +67,10 @@ public class NameUtils {
         }
     }
 
-    /**
-     * Convert to table name: "BlogPost" -> "blog_posts" (snake_case + plural)
-     */
     public static String toTableName(String input) {
         return toPlural(toSnakeCase(input));
     }
 
-    /**
-     * Get package path from package name: "com.example.blog" -> "com/example/blog"
-     */
     public static String toPackagePath(String packageName) {
         return packageName.replace('.', '/');
     }

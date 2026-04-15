@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"><groupId>com.example</groupId><artifactId>demo</artifactId><version>0.0.1-SNAPSHOT</version><dependencies>
+<!-- Flyway for DB Migrations -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-database-postgresql</artifactId>
+</dependency>
+</dependencies><build>
+        <plugins>
+<plugin>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-maven-plugin</artifactId>
+    <configuration>
+        <url>jdbc:postgresql://localhost:5432/test_verify_db</url>
+        <user>postgres</user>
+        <password>postgres</password>
+    </configuration>
+</plugin>
+        </plugins>
+</build></project>

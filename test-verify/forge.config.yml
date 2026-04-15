@@ -1,0 +1,15 @@
+projectName: "test-verify"
+basePackage: "com.example.demo"
+nextMigrationVersion: 1
+services: {}
+database:
+  type: "postgresql"
+  host: "localhost"
+  port: 5432
+  username: "postgres"
+  password: "postgres"
+  dockerManaged: false
+authEnabled: false
+authService: null
+adminEnabled: false
+frontendEnabled: false

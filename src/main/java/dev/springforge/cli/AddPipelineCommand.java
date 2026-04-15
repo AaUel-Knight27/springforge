@@ -88,7 +88,7 @@ public class AddPipelineCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add pipeline: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

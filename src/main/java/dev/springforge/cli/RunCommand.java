@@ -88,7 +88,7 @@ public class RunCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to run: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

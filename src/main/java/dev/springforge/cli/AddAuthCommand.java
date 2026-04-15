@@ -154,7 +154,7 @@ public class AddAuthCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add auth: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 

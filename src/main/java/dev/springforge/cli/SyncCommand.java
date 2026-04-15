@@ -52,7 +52,7 @@ public class SyncCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to sync: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

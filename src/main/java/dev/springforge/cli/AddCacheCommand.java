@@ -87,7 +87,7 @@ public class AddCacheCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add cache: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

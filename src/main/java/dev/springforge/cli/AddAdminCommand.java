@@ -111,7 +111,7 @@ public class AddAdminCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to generate admin panel: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

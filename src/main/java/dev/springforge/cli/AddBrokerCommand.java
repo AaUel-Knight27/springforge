@@ -138,7 +138,7 @@ public class AddBrokerCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add broker: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

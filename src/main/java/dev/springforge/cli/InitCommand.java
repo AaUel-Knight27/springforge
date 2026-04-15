@@ -60,6 +60,79 @@ public class InitCommand implements Runnable {
                     projectDir.resolve("docker-compose.yml"));
             ConsoleOutput.created("docker-compose.yml");
 
+            // Inject Flyway dependency natively if project has pom.xml
+            Path pomPath = projectDir.resolve("pom.xml");
+            if (FileUtils.exists(pomPath)) {
+                String flywayDep = """
+                        
+                                <!-- Flyway for DB Migrations -->
+                                <dependency>
+                                    <groupId>org.flywaydb</groupId>
+                                    <artifactId>flyway-core</artifactId>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.flywaydb</groupId>
+                                    <artifactId>flyway-database-postgresql</artifactId>
+                                </dependency>""";
+                if (!FileUtils.readFile(pomPath).contains("flyway-core")) {
+                    FileUtils.insertBeforeLine(pomPath, "</dependencies>", flywayDep);
+                    ConsoleOutput.updated("pom.xml (added flyway-core + flyway-database-postgresql)");
+                }
+
+                // Inject Flyway Maven Plugin
+                String flywayPlugin = String.format("""
+                        
+                                    <plugin>
+                                        <groupId>org.flywaydb</groupId>
+                                        <artifactId>flyway-maven-plugin</artifactId>
+                                        <configuration>
+                                            <url>jdbc:postgresql://localhost:5432/%s</url>
+                                            <user>postgres</user>
+                                            <password>postgres</password>
+                                        </configuration>
+                                    </plugin>""", projectName.replace("-", "_") + "_db");
+
+                String pomContent = FileUtils.readFile(pomPath);
+                if (!pomContent.contains("flyway-maven-plugin")) {
+                    if (pomContent.contains("<plugins>")) {
+                        FileUtils.insertAfterLine(pomPath, "<plugins>", flywayPlugin);
+                    } else if (pomContent.contains("</build>")) {
+                        FileUtils.insertBeforeLine(pomPath, "</build>", "\n        <plugins>" + flywayPlugin + "\n        </plugins>");
+                    }
+                    ConsoleOutput.updated("pom.xml (added flyway-maven-plugin)");
+                }
+            }
+
+            // Inject application.properties
+            Path propertiesPath = projectDir.resolve("src/main/resources/application.properties");
+            Path ymlPath = projectDir.resolve("src/main/resources/application.yml");
+            Path yamlPath = projectDir.resolve("src/main/resources/application.yaml");
+
+            if (!FileUtils.exists(propertiesPath) && !FileUtils.exists(ymlPath) && !FileUtils.exists(yamlPath)) {
+                FileUtils.mkdirs(projectDir.resolve("src/main/resources"));
+                FileUtils.writeFile(propertiesPath, "");
+                ConsoleOutput.created("src/main/resources/application.properties");
+            }
+
+            if (FileUtils.exists(propertiesPath)) {
+                String dbProps = String.format("""
+                        
+                        # Database Configuration (SpringForge)
+                        spring.datasource.url=jdbc:postgresql://localhost:5432/%s
+                        spring.datasource.username=postgres
+                        spring.datasource.password=postgres
+                        spring.jpa.hibernate.ddl-auto=validate
+                        spring.flyway.enabled=true
+                        spring.flyway.locations=classpath:db/migration
+                        """, projectName.replace("-", "_") + "_db");
+
+                String propsContent = FileUtils.readFile(propertiesPath);
+                if (!propsContent.contains("spring.datasource.url")) {
+                    FileUtils.appendFile(propertiesPath, dbProps);
+                    ConsoleOutput.updated("application.properties (added DB & Flyway config)");
+                }
+            }
+
             // Save config
             configManager.save(projectDir, config);
             ConsoleOutput.created("forge.config.yml");
@@ -74,7 +147,7 @@ public class InitCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to initialize project: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 

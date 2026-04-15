@@ -57,7 +57,7 @@ public class AddServiceCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add service: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

@@ -50,18 +50,21 @@ public class SetupDbCommand implements Runnable {
             config.getDatabase().setPort(port);
             configManager.save(projectDir, config);
 
-            ConsoleOutput.done("Database setup complete!");
+            ConsoleOutput.done("Infrastructure setup complete!");
             ConsoleOutput.newline();
-            ConsoleOutput.info("Start PostgreSQL:");
+            ConsoleOutput.info("How it works:");
+            ConsoleOutput.info("  1. 'setup-db' created Docker scripts for container management.");
+            ConsoleOutput.info("  2. Flyway (in src/main/resources/db/migration) manages your schema.");
+            ConsoleOutput.info("  3. IntelliJ's Flyway plugin will detect your migrations automatically.");
+            ConsoleOutput.newline();
+            ConsoleOutput.info("Start your PostgreSQL container:");
             ConsoleOutput.command("docker-compose up -d");
             ConsoleOutput.newline();
-            ConsoleOutput.info("Databases created:");
-            ConsoleOutput.info("  • " + mainDbName);
-            ConsoleOutput.newline();
+            ConsoleOutput.info("Monolithic Database Name: " + mainDbName);
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to setup database: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }

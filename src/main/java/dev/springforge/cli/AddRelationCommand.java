@@ -124,7 +124,7 @@ public class AddRelationCommand implements Runnable {
 
         } catch (Exception e) {
             ConsoleOutput.error("Failed to add relation: " + e.getMessage());
-            e.printStackTrace();
+
         }
     }
 }
