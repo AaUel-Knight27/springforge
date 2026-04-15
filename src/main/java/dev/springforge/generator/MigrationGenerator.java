@@ -4,6 +4,7 @@ import dev.springforge.model.EntityDefinition;
 import dev.springforge.model.FieldDefinition;
 import dev.springforge.model.ServiceDefinition;
 import dev.springforge.util.ConsoleOutput;
+import dev.springforge.util.FileUtils;
 import dev.springforge.util.NameUtils;
 
 import java.io.IOException;
@@ -21,9 +22,8 @@ public class MigrationGenerator {
      * Generate a CREATE TABLE migration.
      */
     public void generateCreateTable(Path projectDir, ServiceDefinition service, EntityDefinition entity, int version) throws IOException {
-        String serviceDirName = service.getName() + "-service";
-        Path migrationDir = projectDir.resolve("services").resolve(serviceDirName)
-                .resolve("src/main/resources/db/migration");
+        Path migrationDir = projectDir.resolve("src/main/resources/db/migration");
+        FileUtils.mkdirs(migrationDir);
 
         String fileName = String.format("V%d__create_%s.sql", version, entity.getTableName());
 
@@ -56,9 +56,8 @@ public class MigrationGenerator {
     public void generateAddForeignKey(Path projectDir, ServiceDefinition service,
                                        String tableName, String targetTable,
                                        String columnName, int version) throws IOException {
-        String serviceDirName = service.getName() + "-service";
-        Path migrationDir = projectDir.resolve("services").resolve(serviceDirName)
-                .resolve("src/main/resources/db/migration");
+        Path migrationDir = projectDir.resolve("src/main/resources/db/migration");
+        FileUtils.mkdirs(migrationDir);
 
         String fileName = String.format("V%d__add_%s_to_%s.sql", version, columnName, tableName);
 

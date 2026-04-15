@@ -57,21 +57,13 @@ public class RunCommand implements Runnable {
                 Thread.sleep(3000);
             }
 
-            // Start Spring Boot services
-            for (Map.Entry<String, ServiceDefinition> entry : config.getServices().entrySet()) {
-                String name = entry.getKey();
-                if (specificService != null && !specificService.equals(name)) continue;
-
-                String serviceDirName = name + "-service";
-                Path serviceDir = projectDir.resolve("services").resolve(serviceDirName);
-
-                ConsoleOutput.step("Starting " + name + "-service on port " + entry.getValue().getPort() + "...");
-                Process process = new ProcessBuilder("mvn", "spring-boot:run")
-                        .directory(serviceDir.toFile())
-                        .inheritIO()
-                        .start();
-                processes.add(process);
-            }
+            // Start Spring Boot service (Monolith)
+            ConsoleOutput.step("Starting Spring Boot application...");
+            Process process = new ProcessBuilder("mvn", "spring-boot:run")
+                    .directory(projectDir.toFile())
+                    .inheritIO()
+                    .start();
+            processes.add(process);
 
             // Start frontend
             if (!noFrontend) {

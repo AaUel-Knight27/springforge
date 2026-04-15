@@ -48,10 +48,8 @@ public class AddAuthCommand implements Runnable {
                 return;
             }
 
-            String serviceDirName = serviceName + "-service";
-            Path serviceDir = projectDir.resolve("services").resolve(serviceDirName);
             String packagePath = NameUtils.toPackagePath(service.getPackageName());
-            Path javaDir = serviceDir.resolve("src/main/java").resolve(packagePath);
+            Path javaDir = projectDir.resolve("src/main/java").resolve(packagePath);
 
             // Context for templates
             Map<String, Object> ctx = new HashMap<>();
@@ -114,7 +112,8 @@ public class AddAuthCommand implements Runnable {
 
             // Generate user migration
             int version = config.getAndIncrementMigrationVersion();
-            Path migrationDir = serviceDir.resolve("src/main/resources/db/migration");
+            Path migrationDir = projectDir.resolve("src/main/resources/db/migration");
+            FileUtils.mkdirs(migrationDir);
             String migrationFile = String.format("V%d__create_users_and_roles.sql", version);
 
             String migration = """
@@ -138,7 +137,7 @@ public class AddAuthCommand implements Runnable {
             ConsoleOutput.created("db/migration/" + migrationFile);
 
             // Add Spring Security dependency to service POM
-            addSecurityDependency(serviceDir);
+            addSecurityDependency(projectDir);
 
             // Update config
             service.setAuthEnabled(true);
@@ -189,7 +188,7 @@ public class AddAuthCommand implements Runnable {
                             <scope>runtime</scope>
                         </dependency>""";
 
-        FileUtils.insertBeforeLine(pomPath, "<!-- Test -->", securityDep);
+        FileUtils.insertBeforeLine(pomPath, "</dependencies>", securityDep);
         ConsoleOutput.updated("pom.xml (added Spring Security + JWT dependencies)");
     }
 }

@@ -69,15 +69,23 @@ public class AddEntityCommand implements Runnable {
             if (fieldSpecs != null) {
                 for (String spec : fieldSpecs) {
                     String[] parts = spec.split(":");
-                    if (parts.length != 2) {
-                        ConsoleOutput.warn("Skipping invalid field spec: " + spec + " (expected name:type)");
+                    if (parts.length < 2) {
+                        ConsoleOutput.warn("Skipping invalid field spec: " + spec + " (expected name:type[:validator])");
                         continue;
                     }
                     String fieldName = NameUtils.toCamelCase(parts[0]);
                     String columnName = NameUtils.toSnakeCase(parts[0]);
                     FieldType fieldType = FieldType.fromString(parts[1]);
-                    entity.addField(new FieldDefinition(fieldName, columnName, fieldType));
-                    ConsoleOutput.info("Field: " + fieldName + " (" + fieldType.getJavaType() + " → " + fieldType.getSqlType() + ")");
+                    
+                    FieldDefinition fd = new FieldDefinition(fieldName, columnName, fieldType);
+                    
+                    // Parse optional validators
+                    for (int i = 2; i < parts.length; i++) {
+                        fd.addValidator(parts[i].toLowerCase());
+                    }
+                    
+                    entity.addField(fd);
+                    ConsoleOutput.info("Field: " + fieldName + " (" + fieldType.getJavaType() + " → " + fieldType.getSqlType() + ") " + (parts.length > 2 ? "+ validators" : ""));
                 }
             }
 

@@ -12,6 +12,7 @@ public class FieldDefinition {
     private FieldType type;
     private boolean nullable = true;
     private boolean unique = false;
+    private java.util.List<java.util.Map<String, String>> validators = new java.util.ArrayList<>();
 
     public FieldDefinition() {}
 
@@ -36,6 +37,24 @@ public class FieldDefinition {
 
     public boolean isUnique() { return unique; }
     public void setUnique(boolean unique) { this.unique = unique; }
+
+    public java.util.List<java.util.Map<String, String>> getValidators() { return validators; }
+    
+    public void addValidator(String modifier) {
+        if (modifier.equals("email")) {
+            validators.add(java.util.Map.of("annotation", "@jakarta.validation.constraints.Email(message = \\\"must be a valid email\\\")"));
+        } else if (modifier.equals("notblank") || modifier.equals("required")) {
+            validators.add(java.util.Map.of("annotation", "@jakarta.validation.constraints.NotBlank(message = \\\"cannot be blank\\\")"));
+        } else if (modifier.equals("notnull")) {
+            validators.add(java.util.Map.of("annotation", "@jakarta.validation.constraints.NotNull(message = \\\"is required\\\")"));
+        } else if (modifier.startsWith("min-")) {
+            String val = modifier.substring(4);
+            validators.add(java.util.Map.of("annotation", "@jakarta.validation.constraints.Size(min = " + val + ", message = \\\"size must be at least " + val + "\\\")"));
+        } else if (modifier.startsWith("max-")) {
+            String val = modifier.substring(4);
+            validators.add(java.util.Map.of("annotation", "@jakarta.validation.constraints.Size(max = " + val + ", message = \\\"size must be at most " + val + "\\\")"));
+        }
+    }
 
     /**
      * Get the Java type string.

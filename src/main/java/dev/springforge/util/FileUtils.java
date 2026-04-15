@@ -102,4 +102,11 @@ public class FileUtils {
             writeFile(file, content.replace(marker, replacement));
         }
     }
+
+    /**
+     * Append content to a file.
+     */
+    public static void appendFile(Path file, String content) throws IOException {
+        Files.writeString(file, content, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
 }

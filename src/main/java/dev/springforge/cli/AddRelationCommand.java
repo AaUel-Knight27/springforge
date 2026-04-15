@@ -54,10 +54,8 @@ public class AddRelationCommand implements Runnable {
             String targetCamel = NameUtils.toCamelCase(targetEntity);
 
             // Find source entity file and add annotation
-            String serviceDirName = serviceName + "-service";
-            Path serviceDir = projectDir.resolve("services").resolve(serviceDirName);
             String packagePath = NameUtils.toPackagePath(service.getPackageName());
-            Path javaDir = serviceDir.resolve("src/main/java").resolve(packagePath);
+            Path javaDir = projectDir.resolve("src/main/java").resolve(packagePath);
 
             Path entityFile = javaDir.resolve("entity/" + sourcePascal + ".java");
             if (!FileUtils.exists(entityFile)) {

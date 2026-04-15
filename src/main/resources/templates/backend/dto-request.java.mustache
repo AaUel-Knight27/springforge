@@ -9,6 +9,9 @@ import {{import}};
 public class {{entityName}}Request {
 
 {{#fields}}
+{{#validators}}
+    {{{annotation}}}
+{{/validators}}
     private {{javaType}} {{name}};
 {{/fields}}
 

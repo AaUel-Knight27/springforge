@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 @Command(
     name = "service",
-    description = "Add a new microservice to the project"
+    description = "Add a bounded context domain (package) to your Spring Boot monolith"
 )
 public class AddServiceCommand implements Runnable {
 
@@ -42,26 +42,15 @@ public class AddServiceCommand implements Runnable {
                 return;
             }
 
-            // Auto-assign port if not specified
-            if (port == 0) {
-                port = 8080 + config.getServices().size() + 1;
-            }
-
             // Create service definition
-            String packageName = config.getGroupId() + "." + serviceName.replace("-", ".");
-            ServiceDefinition service = new ServiceDefinition(serviceName, packageName, port);
-
-            // Generate service files
-            backendGenerator.generateService(projectDir, config, service);
-
-            // Update parent POM with new module
-            backendGenerator.addModuleToParentPom(projectDir, serviceName);
+            String packageName = config.getBasePackage() + "." + serviceName.replace("-", ".");
+            ServiceDefinition service = new ServiceDefinition(serviceName, packageName, 8080);
 
             // Register service in config
             config.addService(serviceName, service);
             configManager.save(projectDir, config);
 
-            ConsoleOutput.done("Service '" + serviceName + "' created on port " + port + "!");
+            ConsoleOutput.done("Service domain '" + serviceName + "' registered in package: " + packageName);
             ConsoleOutput.info("Next: Add entities with:");
             ConsoleOutput.command("forge add entity <Name> field:type field:type --service " + serviceName);
             ConsoleOutput.newline();

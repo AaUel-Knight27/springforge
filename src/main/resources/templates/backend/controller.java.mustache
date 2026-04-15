@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/{{urlPath}}")
@@ -21,8 +22,8 @@ public class {{entityName}}Controller {
     }
 
     @GetMapping
-    public ResponseEntity<List<{{entityName}}Response>> getAll() {
-        return ResponseEntity.ok({{entityNameLower}}Service.findAll());
+    public ResponseEntity<Page<{{entityName}}Response>> getAll(Pageable pageable) {
+        return ResponseEntity.ok({{entityNameLower}}Service.findAll(pageable));
     }
 
     @GetMapping("/{id}")
@@ -31,13 +32,13 @@ public class {{entityName}}Controller {
     }
 
     @PostMapping
-    public ResponseEntity<{{entityName}}Response> create(@RequestBody {{entityName}}Request request) {
+    public ResponseEntity<{{entityName}}Response> create(@jakarta.validation.Valid @RequestBody {{entityName}}Request request) {
         {{entityName}}Response created = {{entityNameLower}}Service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<{{entityName}}Response> update(@PathVariable Long id, @RequestBody {{entityName}}Request request) {
+    public ResponseEntity<{{entityName}}Response> update(@PathVariable Long id, @jakarta.validation.Valid @RequestBody {{entityName}}Request request) {
         return ResponseEntity.ok({{entityNameLower}}Service.update(id, request));
     }
 

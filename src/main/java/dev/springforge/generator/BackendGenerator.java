@@ -17,58 +17,11 @@ public class BackendGenerator {
     private final TemplateEngine engine = new TemplateEngine();
 
     /**
-     * Generate the full service scaffold (Application class, pom.xml, application.yml, directory structure).
-     */
-    public void generateService(Path projectDir, ForgeConfig config, ServiceDefinition service) throws IOException {
-        String serviceDirName = service.getName() + "-service";
-        Path serviceDir = projectDir.resolve("services").resolve(serviceDirName);
-        String packagePath = NameUtils.toPackagePath(service.getPackageName());
-        Path javaDir = serviceDir.resolve("src/main/java").resolve(packagePath);
-        Path resourcesDir = serviceDir.resolve("src/main/resources");
-        Path migrationDir = resourcesDir.resolve("db/migration");
-
-        // Create directories
-        FileUtils.mkdirs(javaDir);
-        FileUtils.mkdirs(resourcesDir);
-        FileUtils.mkdirs(migrationDir);
-
-        // Build context
-        Map<String, Object> ctx = new HashMap<>();
-        ctx.put("serviceName", service.getName());
-        ctx.put("serviceArtifactId", serviceDirName);
-        ctx.put("groupId", config.getGroupId());
-        ctx.put("packageName", service.getPackageName());
-        ctx.put("appClassName", NameUtils.toPascalCase(service.getName()) + "Application");
-        ctx.put("port", service.getPort());
-        ctx.put("databaseName", service.getDatabaseName());
-        ctx.put("dbHost", config.getDatabase().getHost());
-        ctx.put("dbPort", config.getDatabase().getPort());
-        ctx.put("dbUsername", config.getDatabase().getUsername());
-        ctx.put("dbPassword", config.getDatabase().getPassword());
-        ctx.put("javaVersion", config.getJavaVersion());
-        ctx.put("springBootVersion", config.getSpringBootVersion());
-
-        // Generate pom.xml
-        engine.renderToFile("backend/pom.xml.mustache", ctx, serviceDir.resolve("pom.xml"));
-        ConsoleOutput.created("services/" + serviceDirName + "/pom.xml");
-
-        // Generate Application.java
-        engine.renderToFile("backend/main-app.java.mustache", ctx, javaDir.resolve(ctx.get("appClassName") + ".java"));
-        ConsoleOutput.created("services/" + serviceDirName + "/.../" + ctx.get("appClassName") + ".java");
-
-        // Generate application.yml
-        engine.renderToFile("backend/application.yml.mustache", ctx, resourcesDir.resolve("application.yml"));
-        ConsoleOutput.created("services/" + serviceDirName + "/src/main/resources/application.yml");
-    }
-
-    /**
      * Generate entity + full CRUD stack.
      */
     public void generateEntity(Path projectDir, ForgeConfig config, ServiceDefinition service, EntityDefinition entity) throws IOException {
-        String serviceDirName = service.getName() + "-service";
-        Path serviceDir = projectDir.resolve("services").resolve(serviceDirName);
         String packagePath = NameUtils.toPackagePath(service.getPackageName());
-        Path javaDir = serviceDir.resolve("src/main/java").resolve(packagePath);
+        Path javaDir = projectDir.resolve("src/main/java").resolve(packagePath);
 
         String pascal = entity.getName();
         String camel = NameUtils.toCamelCase(pascal);
@@ -120,20 +73,13 @@ public class BackendGenerator {
             engine.renderToFile("backend/exception.java.mustache", ctx, exceptionFile);
             ConsoleOutput.created("ResourceNotFoundException.java");
         }
-    }
 
-    /**
-     * Add a module reference to the parent POM.
-     */
-    public void addModuleToParentPom(Path projectDir, String serviceName) throws IOException {
-        Path pomPath = projectDir.resolve("pom.xml");
-        if (!FileUtils.exists(pomPath)) return;
-
-        String moduleLine = "        <module>services/" + serviceName + "-service</module>";
-        String marker = "<!-- forge:modules -->";
-
-        FileUtils.insertAfterLine(pomPath, marker, moduleLine);
-        ConsoleOutput.updated("pom.xml (added module: " + serviceName + "-service)");
+        // Generate GlobalExceptionHandler if not already present
+        Path globalExceptionFile = javaDir.resolve("exception/GlobalExceptionHandler.java");
+        if (!FileUtils.exists(globalExceptionFile)) {
+            engine.renderToFile("backend/exception/global-handler.java.mustache", ctx, globalExceptionFile);
+            ConsoleOutput.created("GlobalExceptionHandler.java");
+        }
     }
 
     /**

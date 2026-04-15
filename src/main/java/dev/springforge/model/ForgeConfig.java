@@ -10,11 +10,7 @@ import java.util.*;
 public class ForgeConfig {
 
     private String projectName;
-    private String groupId;
-    private String javaVersion = "25";
-    private String springBootVersion = "4.0.5";
-    private String buildTool = "maven";
-    private boolean microservices = true;
+    private String basePackage;
     private int nextMigrationVersion = 1;
     private Map<String, ServiceDefinition> services = new LinkedHashMap<>();
     private DatabaseConfig database = new DatabaseConfig();
@@ -27,20 +23,8 @@ public class ForgeConfig {
     public String getProjectName() { return projectName; }
     public void setProjectName(String projectName) { this.projectName = projectName; }
 
-    public String getGroupId() { return groupId; }
-    public void setGroupId(String groupId) { this.groupId = groupId; }
-
-    public String getJavaVersion() { return javaVersion; }
-    public void setJavaVersion(String javaVersion) { this.javaVersion = javaVersion; }
-
-    public String getSpringBootVersion() { return springBootVersion; }
-    public void setSpringBootVersion(String springBootVersion) { this.springBootVersion = springBootVersion; }
-
-    public String getBuildTool() { return buildTool; }
-    public void setBuildTool(String buildTool) { this.buildTool = buildTool; }
-
-    public boolean isMicroservices() { return microservices; }
-    public void setMicroservices(boolean microservices) { this.microservices = microservices; }
+    public String getBasePackage() { return basePackage; }
+    public void setBasePackage(String basePackage) { this.basePackage = basePackage; }
 
     public int getNextMigrationVersion() { return nextMigrationVersion; }
     public void setNextMigrationVersion(int nextMigrationVersion) { this.nextMigrationVersion = nextMigrationVersion; }

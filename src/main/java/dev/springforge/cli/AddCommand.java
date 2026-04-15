@@ -12,6 +12,9 @@ import picocli.CommandLine.Command;
         AddAuthCommand.class,
         AddRelationCommand.class,
         AddAdminCommand.class,
+        AddPipelineCommand.class,
+        AddCacheCommand.class,
+        AddBrokerCommand.class,
         CommandLine.HelpCommand.class
     }
 )

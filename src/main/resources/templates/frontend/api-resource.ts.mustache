@@ -3,9 +3,18 @@ import { {{entityName}}, {{entityName}}Request } from '../../types/{{entityNameK
 
 const BASE_PATH = '/api/{{urlPath}}';
 
+export interface SpringPage<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
 export const {{entityNameLower}}Api = {
-  getAll: () =>
-    api.get<{{entityName}}[]>(BASE_PATH),
+  getAll: (page = 0, size = 10, sort = '') =>
+    api.get<SpringPage<{{entityName}}>>(`${BASE_PATH}?page=${page}&size=${size}&sort=${sort}`),
+
 
   getById: (id: number) =>
     api.get<{{entityName}}>(`${BASE_PATH}/${id}`),
