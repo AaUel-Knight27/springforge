@@ -1,8 +1,0 @@
--- SpringForge Migration: Create {{tableName}} table
-
-CREATE TABLE {{tableName}} (
-    id BIGSERIAL PRIMARY KEY{{#hasColumns}},{{/hasColumns}}
-{{#columns}}
-    {{columnName}} {{sqlType}}{{#unique}} UNIQUE{{/unique}}{{^nullable}} NOT NULL{{/nullable}}{{^last}},{{/last}}
-{{/columns}}
-);
