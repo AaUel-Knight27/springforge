@@ -1,0 +1,71 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { {{entityNameLower}}Api } from '../lib/api/{{entityNameKebab}}';
+import type { {{entityName}}, {{entityName}}Request } from '../types/{{entityNameKebab}}';
+
+export function use{{entityName}}s() {
+  const [data, setData] = useState<{{entityName}}[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await {{entityNameLower}}Api.getAll();
+      setData(response.data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch {{entityNameLower}}s');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  const create = async (request: {{entityName}}Request) => {
+    const response = await {{entityNameLower}}Api.create(request);
+    setData((prev) => [...prev, response.data]);
+    return response.data;
+  };
+
+  const update = async (id: number, request: {{entityName}}Request) => {
+    const response = await {{entityNameLower}}Api.update(id, request);
+    setData((prev) => prev.map((item) => (item.id === id ? response.data : item)));
+    return response.data;
+  };
+
+  const remove = async (id: number) => {
+    await {{entityNameLower}}Api.delete(id);
+    setData((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  return { data, loading, error, refetch: fetchAll, create, update, remove };
+}
+
+export function use{{entityName}}(id: number) {
+  const [data, setData] = useState<{{entityName}} | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        setLoading(true);
+        const response = await {{entityNameLower}}Api.getById(id);
+        setData(response.data);
+        setError(null);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch {{entityNameLower}}');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetch();
+  }, [id]);
+
+  return { data, loading, error };
+}

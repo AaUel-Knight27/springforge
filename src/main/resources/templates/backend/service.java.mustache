@@ -1,0 +1,78 @@
+package {{packageName}}.service;
+
+import {{packageName}}.dto.{{entityName}}Request;
+import {{packageName}}.dto.{{entityName}}Response;
+import {{packageName}}.entity.{{entityName}};
+import {{packageName}}.exception.ResourceNotFoundException;
+import {{packageName}}.repository.{{entityName}}Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class {{entityName}}Service {
+
+    private final {{entityName}}Repository {{entityNameLower}}Repository;
+
+    public {{entityName}}Service({{entityName}}Repository {{entityNameLower}}Repository) {
+        this.{{entityNameLower}}Repository = {{entityNameLower}}Repository;
+    }
+
+    public List<{{entityName}}Response> findAll() {
+        return {{entityNameLower}}Repository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public {{entityName}}Response findById(Long id) {
+        {{entityName}} entity = {{entityNameLower}}Repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("{{entityName}}", "id", id));
+        return toResponse(entity);
+    }
+
+    public {{entityName}}Response create({{entityName}}Request request) {
+        {{entityName}} entity = toEntity(request);
+        {{entityName}} saved = {{entityNameLower}}Repository.save(entity);
+        return toResponse(saved);
+    }
+
+    public {{entityName}}Response update(Long id, {{entityName}}Request request) {
+        {{entityName}} entity = {{entityNameLower}}Repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("{{entityName}}", "id", id));
+
+{{#fields}}
+        entity.set{{nameCapitalized}}(request.get{{nameCapitalized}}());
+{{/fields}}
+
+        {{entityName}} updated = {{entityNameLower}}Repository.save(entity);
+        return toResponse(updated);
+    }
+
+    public void delete(Long id) {
+        if (!{{entityNameLower}}Repository.existsById(id)) {
+            throw new ResourceNotFoundException("{{entityName}}", "id", id);
+        }
+        {{entityNameLower}}Repository.deleteById(id);
+    }
+
+    private {{entityName}}Response toResponse({{entityName}} entity) {
+        {{entityName}}Response response = new {{entityName}}Response();
+        response.setId(entity.getId());
+{{#fields}}
+        response.set{{nameCapitalized}}(entity.get{{nameCapitalized}}());
+{{/fields}}
+        return response;
+    }
+
+    private {{entityName}} toEntity({{entityName}}Request request) {
+        {{entityName}} entity = new {{entityName}}();
+{{#fields}}
+        entity.set{{nameCapitalized}}(request.get{{nameCapitalized}}());
+{{/fields}}
+        return entity;
+    }
+}

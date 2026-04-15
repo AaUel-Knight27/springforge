@@ -1,0 +1,53 @@
+import axios from 'axios';
+
+// Base API client for {{projectName}}
+// Each service runs on its own port in development
+
+const createApiClient = (baseURL: string) => {
+  const client = axios.create({
+    baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Request interceptor - attach JWT token
+  client.interceptors.request.use(
+    (config) => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  // Response interceptor - handle errors globally
+  client.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        // Handle unauthorized - redirect to login
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return client;
+};
+
+// Default API client (gateway or single service)
+export const api = createApiClient(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8081');
+
+{{#services}}
+// {{name}} service client
+export const {{name}}Api = createApiClient(process.env.NEXT_PUBLIC_{{name}}_API_URL || 'http://localhost:{{port}}');
+
+{{/services}}
+
+export default api;

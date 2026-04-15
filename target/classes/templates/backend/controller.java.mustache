@@ -1,0 +1,49 @@
+package {{packageName}}.controller;
+
+import {{packageName}}.dto.{{entityName}}Request;
+import {{packageName}}.dto.{{entityName}}Response;
+import {{packageName}}.service.{{entityName}}Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/{{urlPath}}")
+@CrossOrigin(origins = "*")
+public class {{entityName}}Controller {
+
+    private final {{entityName}}Service {{entityNameLower}}Service;
+
+    public {{entityName}}Controller({{entityName}}Service {{entityNameLower}}Service) {
+        this.{{entityNameLower}}Service = {{entityNameLower}}Service;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<{{entityName}}Response>> getAll() {
+        return ResponseEntity.ok({{entityNameLower}}Service.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<{{entityName}}Response> getById(@PathVariable Long id) {
+        return ResponseEntity.ok({{entityNameLower}}Service.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<{{entityName}}Response> create(@RequestBody {{entityName}}Request request) {
+        {{entityName}}Response created = {{entityNameLower}}Service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<{{entityName}}Response> update(@PathVariable Long id, @RequestBody {{entityName}}Request request) {
+        return ResponseEntity.ok({{entityNameLower}}Service.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        {{entityNameLower}}Service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

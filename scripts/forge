@@ -1,0 +1,16 @@
+#!/bin/bash
+# SpringForge CLI Wrapper
+# Runs the SpringForge JAR with any passed arguments
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+JAR_FILE="$PROJECT_DIR/target/springforge-cli-1.0.0.jar"
+
+# Check if JAR exists
+if [ ! -f "$JAR_FILE" ]; then
+    echo "  ❌ JAR not found. Run 'mvn clean package' first."
+    echo "  Or run: bash scripts/install.sh"
+    exit 1
+fi
+
+java -jar "$JAR_FILE" "$@"

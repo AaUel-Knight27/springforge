@@ -1,0 +1,38 @@
+package {{packageName}}.dto;
+
+{{#hasExtraImports}}
+{{#extraImports}}
+import {{import}};
+{{/extraImports}}
+{{/hasExtraImports}}
+
+public class {{entityName}}Response {
+
+    private Long id;
+{{#fields}}
+    private {{javaType}} {{name}};
+{{/fields}}
+
+    // Default constructor
+    public {{entityName}}Response() {}
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+{{#fields}}
+    public {{javaType}} get{{nameCapitalized}}() {
+        return {{name}};
+    }
+
+    public void set{{nameCapitalized}}({{javaType}} {{name}}) {
+        this.{{name}} = {{name}};
+    }
+
+{{/fields}}
+}

@@ -1,0 +1,29 @@
+package {{packageName}}.dto;
+
+{{#hasExtraImports}}
+{{#extraImports}}
+import {{import}};
+{{/extraImports}}
+{{/hasExtraImports}}
+
+public class {{entityName}}Request {
+
+{{#fields}}
+    private {{javaType}} {{name}};
+{{/fields}}
+
+    // Default constructor
+    public {{entityName}}Request() {}
+
+    // Getters and Setters
+{{#fields}}
+    public {{javaType}} get{{nameCapitalized}}() {
+        return {{name}};
+    }
+
+    public void set{{nameCapitalized}}({{javaType}} {{name}}) {
+        this.{{name}} = {{name}};
+    }
+
+{{/fields}}
+}

@@ -1,0 +1,14 @@
+export interface {{entityName}} {
+  id: number;
+{{#fields}}
+  {{name}}: {{tsType}};
+{{/fields}}
+}
+
+export interface {{entityName}}Request {
+{{#fields}}
+  {{name}}: {{tsType}};
+{{/fields}}
+}
+
+export type {{entityName}}Response = {{entityName}};

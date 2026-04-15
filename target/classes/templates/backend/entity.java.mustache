@@ -1,0 +1,50 @@
+package {{packageName}}.entity;
+
+import jakarta.persistence.*;
+{{#hasExtraImports}}
+{{#extraImports}}
+import {{import}};
+{{/extraImports}}
+{{/hasExtraImports}}
+
+@Entity
+@Table(name = "{{tableName}}")
+public class {{entityName}} {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+{{#fields}}
+{{#isText}}
+    @Column(name = "{{columnName}}", columnDefinition = "TEXT")
+{{/isText}}
+{{^isText}}
+    @Column(name = "{{columnName}}")
+{{/isText}}
+    private {{javaType}} {{name}};
+
+{{/fields}}
+    // Default constructor
+    public {{entityName}}() {}
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+{{#fields}}
+    public {{javaType}} get{{nameCapitalized}}() {
+        return {{name}};
+    }
+
+    public void set{{nameCapitalized}}({{javaType}} {{name}}) {
+        this.{{name}} = {{name}};
+    }
+
+{{/fields}}
+}
